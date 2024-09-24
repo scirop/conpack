@@ -1,8 +1,19 @@
 # conpack
-
 🚀 **Container Package Checking Utility**
 
+Make sure you have the necessary dependencies and permissions to install the package.
+
 `conpack` is a command-line tool to check for the presence of a specified package in running containers using various container runtimes like Docker, Podman, and Finch.
+
+## 📦 Installation
+
+You can install `conpack` directly from the GitHub repository:
+
+```sh
+git clone https://github.com/scirop/conpack.git
+cd conpack
+make install
+```
 
 ## 📋 Usage
 
