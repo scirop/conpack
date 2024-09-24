@@ -10,6 +10,8 @@ import (
 	"os/exec"
 	"strings"
 	"time"
+
+	"github.com/spf13/cobra"
 )
 
 var (
@@ -39,16 +41,42 @@ func usage() {
 	fmt.Println()
 }
 
-func main() {
-	flag.Parse()
+var version = "1.0.0"
 
+func main() {
+	rootCmd := &cobra.Command{
+		Use:   "conpack",
+		Short: "Conpack is a tool to check for packages in running containers",
+		Run:   run,
+	}
+
+	rootCmd.PersistentFlags().StringVarP(&packageName, "package", "p", "", "Package name to search for")
+	rootCmd.PersistentFlags().StringVarP(&runtime, "runtime", "r", "docker", "Container runtime to use (e.g., docker, podman, finch)")
+
+	versionCmd := &cobra.Command{
+		Use:   "version",
+		Short: "Print the version number of conpack",
+		Run: func(cmd *cobra.Command, args []string) {
+			fmt.Println("conpack version", version)
+		},
+	}
+
+	rootCmd.AddCommand(versionCmd)
+
+	if err := rootCmd.Execute(); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+}
+
+func run(cmd *cobra.Command, args []string) {
 	if packageName == "" {
-		usage()
+		cmd.Help()
 		os.Exit(1)
 	}
 
-	cmd := exec.Command(runtime, "ps", "-q")
-	containersBytes, err := cmd.CombinedOutput()
+	cmdExec := exec.Command(runtime, "ps", "-q")
+	containersBytes, err := cmdExec.CombinedOutput()
 	if err != nil {
 		fmt.Println("No running containers found")
 		log.Fatal(err)
@@ -88,8 +116,8 @@ func main() {
 		color := colors[i%len(colors)]
 		animation := animations[i%len(animations)]
 		fmt.Printf("\rChecking containers... [%s%s%s] (%d/%d)", color, animation, "\x1b[0m", i+1, len(containers))
-		cmd := exec.Command(runtime, "exec", container, packageName, "--version")
-		output, _ := cmd.CombinedOutput()
+		cmdExec := exec.Command(runtime, "exec", container, packageName, "--version")
+		output, _ := cmdExec.CombinedOutput()
 		if !strings.Contains(string(output), "exec failed") {
 			foundContainers = append(foundContainers, string(container))
 		}
@@ -102,8 +130,8 @@ func main() {
 		fmt.Printf("CONTAINER NAME\tCONTAINER ID\n")
 		for _, container := range foundContainers {
 			found = true
-			cmd := exec.Command(runtime, "inspect", "--format='{{.Name}}'", container)
-			containerName, _ := cmd.CombinedOutput()
+			cmdExec := exec.Command(runtime, "inspect", "--format='{{.Name}}'", container)
+			containerName, _ := cmdExec.CombinedOutput()
 			// remove line breaks in container name
 			containerName = containerName[1 : len(containerName)-2]
 			fmt.Printf("%s\t%s\n", string(containerName), container)
