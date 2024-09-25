@@ -5,6 +5,8 @@ Make sure you have the necessary dependencies and permissions to install the pac
 
 `conpack` is a command-line tool to check for the presence of a specified package in running containers using various container runtimes like Docker, Podman, and Finch.
 
+![Go](https://github.com/scirop/conpack/actions/workflows/go.yml/badge.svg)
+
 ## 📦 Installation
 
 You can install `conpack` directly from the go repository:
@@ -58,3 +60,4 @@ Contributions are welcome! Please open an issue or submit a pull request on GitH
 For any questions or suggestions, feel free to reach out.
 
 Happy container package checking! 🎉
+
