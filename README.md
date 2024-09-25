@@ -9,10 +9,12 @@ Make sure you have the necessary dependencies and permissions to install the pac
 
 ## 📦 Installation
 
-You can install `conpack` directly from the go repository:
+Currently figuring out how to distribute a binary, but you can follow these steps after cloning the repo
 
 ```sh
-go get github.com/scirop/conpack
+cd conpack
+go build .
+cp conpack /usr/local/bin
 ```
 
 ## 📋 Usage
